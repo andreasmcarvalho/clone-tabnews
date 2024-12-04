@@ -9,7 +9,7 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
       <div className={styles.card}>
-        <h1 className={styles.title}>Gabriele, eu te amo! ❤️</h1>
+        <h1 className={styles.title}>Gabrielle, eu te amo! ❤️</h1>
         <p className={styles.text}>Você é a pessoa mais especial do meu mundo.</p>
         <div className={styles.heart}>❤️</div>
       </div>
