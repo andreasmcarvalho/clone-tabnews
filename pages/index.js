@@ -1,4 +1,4 @@
 function pics() {
-  return <h1>MOti eu te amo</h1>;
+  return <h1>Maria eu te amo pra sempre</h1>;
 }
 export default pics;
