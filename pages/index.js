@@ -232,7 +232,7 @@ function pics() {
         <div className="card">
           <span className="heart-icon">💗</span>
           <p className="eyebrow">para sempre e sempre</p>
-          <h1 className="title">Maria,</h1>
+          <h1 className="title">Luiza,</h1>
           <p className="subtitle">eu te amo pra sempre.</p>
 
           <div className="divider">
