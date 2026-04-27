@@ -1,47 +1,45 @@
 import { useState, useEffect, useRef } from "react";
 
-/* ─── CSS ─────────────────────────────────────────────── */
 const css = `
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Quicksand:wght@400;500;600;700&display=swap');
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
-  --white: #fffbff;
+  --bg: #f0f7ff;
+  --white: #ffffff;
+  --blue0: #e8f4ff;
+  --blue1: #c8e6ff;
+  --blue2: #90caff;
+  --blue3: #5aabf5;
+  --blue4: #2e86de;
   --pink0: #fff0f6;
   --pink1: #ffd6ea;
   --pink2: #ffb3d1;
   --pink3: #ff85b3;
-  --pink4: #e05585;
-  --lilac: #e8d5ff;
-  --lilac2: #c9a8f7;
-  --mint: #d4f5ec;
-  --mint2: #8ee3c8;
-  --yellow: #fff3b0;
-  --yellow2: #ffd966;
-  --text: #5a3550;
-  --text2: #8a5878;
-  --shadow: rgba(220,130,170,0.18);
+  --text: #2a4a6b;
+  --text2: #5b82a8;
+  --shadow: rgba(90,171,245,0.15);
 }
 
 body {
   font-family: 'Nunito', sans-serif;
-  background: var(--pink0);
+  background: var(--bg);
   min-height: 100vh;
   overflow-x: hidden;
 }
 
 @keyframes floatY {
-  0%,100% { transform: translateY(0px) rotate(-2deg); }
-  50%      { transform: translateY(-10px) rotate(2deg); }
+  0%,100% { transform: translateY(0px) rotate(-1deg); }
+  50%      { transform: translateY(-12px) rotate(1deg); }
 }
 @keyframes pop {
-  0%   { transform: scale(0) rotate(-10deg); opacity:0; }
-  70%  { transform: scale(1.15) rotate(3deg); opacity:1; }
+  0%   { transform: scale(0) rotate(-8deg); opacity:0; }
+  70%  { transform: scale(1.12) rotate(2deg); opacity:1; }
   100% { transform: scale(1) rotate(0deg); opacity:1; }
 }
 @keyframes fadeSlideUp {
-  from { opacity:0; transform:translateY(20px); }
+  from { opacity:0; transform:translateY(22px); }
   to   { opacity:1; transform:translateY(0); }
 }
 @keyframes confettiFall {
@@ -50,15 +48,20 @@ body {
 }
 @keyframes heartbeat {
   0%,100% { transform: scale(1); }
-  50%      { transform: scale(1.12); }
+  50%      { transform: scale(1.08); }
 }
 @keyframes shimmer {
   0%   { background-position: -200% center; }
   100% { background-position: 200% center; }
 }
 @keyframes blink {
-  0%,90%,100% { transform: scaleY(1); }
-  95%         { transform: scaleY(0.08); }
+  0%,88%,100% { transform: scaleY(1); }
+  93%         { transform: scaleY(0.06); }
+}
+@keyframes earWiggle {
+  0%,100% { transform: rotate(0deg); transform-origin: bottom center; }
+  30%      { transform: rotate(-6deg); transform-origin: bottom center; }
+  70%      { transform: rotate(4deg); transform-origin: bottom center; }
 }
 
 .page {
@@ -73,28 +76,28 @@ body {
 .blob {
   position: fixed;
   border-radius: 50%;
-  filter: blur(60px);
+  filter: blur(70px);
   pointer-events: none;
   z-index: 0;
-  opacity: 0.45;
+  opacity: 0.4;
 }
 
 .header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.8rem;
   position: relative;
   z-index: 2;
   animation: fadeSlideUp .8s ease both;
 }
 .header-title {
-  font-size: clamp(2rem, 6vw, 3.2rem);
+  font-size: clamp(2rem, 6vw, 3rem);
   font-weight: 900;
-  background: linear-gradient(120deg, #e05585, #c9a8f7, #ff85b3, #ffd966);
+  background: linear-gradient(120deg, var(--blue4), var(--pink3), var(--blue3), var(--pink2));
   background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: shimmer 4s linear infinite;
+  animation: shimmer 5s linear infinite;
   line-height: 1.2;
 }
 .header-sub {
@@ -108,21 +111,18 @@ body {
 .char-wrap {
   position: relative;
   z-index: 2;
-  margin-bottom: 1.5rem;
-  animation: floatY 3s ease-in-out infinite;
-}
-.char-svg {
-  filter: drop-shadow(0 8px 24px rgba(220,130,170,0.35));
+  margin-bottom: 1.6rem;
+  animation: floatY 3.5s ease-in-out infinite;
 }
 
 .card {
-  background: rgba(255,255,255,0.82);
-  backdrop-filter: blur(16px);
+  background: rgba(255,255,255,0.88);
+  backdrop-filter: blur(18px);
   border-radius: 28px;
   padding: 1.8rem 2rem;
-  max-width: 480px;
+  max-width: 500px;
   width: 100%;
-  border: 2px solid var(--pink1);
+  border: 2px solid var(--blue1);
   box-shadow: 0 8px 40px var(--shadow);
   position: relative;
   z-index: 2;
@@ -130,7 +130,7 @@ body {
 }
 
 .section-title {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 800;
   color: var(--text);
   margin-bottom: 1rem;
@@ -139,49 +139,52 @@ body {
   gap: .5rem;
 }
 
+/* ── star game ── */
 .game-area {
   width: 100%;
-  height: 220px;
-  background: linear-gradient(180deg, #e8f4ff 0%, var(--lilac) 100%);
+  height: 200px;
+  background: linear-gradient(160deg, var(--blue0) 0%, #dff0ff 50%, var(--pink0) 100%);
   border-radius: 20px;
   position: relative;
   overflow: hidden;
   cursor: crosshair;
-  border: 2px solid var(--lilac2);
+  border: 2px solid var(--blue1);
   user-select: none;
 }
 .game-star {
   position: absolute;
-  font-size: 28px;
+  font-size: 26px;
   cursor: pointer;
   animation: floatY 2s ease-in-out infinite;
   user-select: none;
+  transition: transform .1s;
 }
-.game-star:hover { transform: scale(1.3); }
+.game-star:hover { transform: scale(1.35) !important; }
 .score-badge {
   display: inline-flex;
   align-items: center;
   gap: .4rem;
-  background: var(--pink1);
+  background: var(--blue1);
   border-radius: 50px;
   padding: .35rem .9rem;
-  font-size: .9rem;
+  font-size: .88rem;
   font-weight: 800;
-  color: var(--pink4);
+  color: var(--blue4);
   margin-top: .8rem;
 }
 
+/* ── memory ── */
 .memory-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
+  gap: 9px;
 }
 .mem-card {
   aspect-ratio: 1;
   border-radius: 14px;
-  border: 2.5px solid var(--pink1);
-  background: var(--pink0);
-  font-size: 1.6rem;
+  border: 2.5px solid var(--blue1);
+  background: var(--blue0);
+  font-size: 1.55rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -190,14 +193,15 @@ body {
   user-select: none;
   box-shadow: 0 2px 8px var(--shadow);
 }
-.mem-card:hover { transform: scale(1.07); box-shadow: 0 4px 16px var(--shadow); }
-.mem-card.flipped { background: var(--yellow); border-color: var(--yellow2); animation: pop .3s ease; }
-.mem-card.matched { background: var(--mint); border-color: var(--mint2); }
+.mem-card:hover { transform: scale(1.07); }
+.mem-card.flipped { background: #fff8e1; border-color: #ffe082; animation: pop .3s ease; }
+.mem-card.matched { background: var(--pink0); border-color: var(--pink2); }
 
+/* ── paint ── */
 .paint-area {
   width: 100%;
   border-radius: 16px;
-  border: 2px solid var(--pink1);
+  border: 2px solid var(--blue1);
   cursor: crosshair;
   display: block;
   background: white;
@@ -207,35 +211,36 @@ body {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-  margin-top: .7rem;
+  margin-top: .8rem;
   align-items: center;
 }
 .color-dot {
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   cursor: pointer;
   border: 3px solid transparent;
   transition: transform .15s, border-color .15s;
-  box-shadow: 0 2px 6px rgba(0,0,0,.12);
+  box-shadow: 0 2px 6px rgba(0,0,0,.1);
 }
-.color-dot:hover { transform: scale(1.2); }
-.color-dot.active { border-color: var(--text); transform: scale(1.15); }
-.paint-btns { display: flex; gap: 8px; margin-top: .7rem; }
+.color-dot:hover { transform: scale(1.22); }
+.color-dot.active { border-color: var(--text); transform: scale(1.18); }
+.paint-btns { display: flex; gap: 8px; margin-top: .8rem; }
 .btn-sm {
   font-family: 'Nunito', sans-serif;
-  font-size: .78rem;
+  font-size: .8rem;
   font-weight: 700;
-  padding: .4rem .9rem;
+  padding: .4rem 1rem;
   border: none;
   border-radius: 50px;
   cursor: pointer;
   transition: transform .15s;
 }
 .btn-sm:hover { transform: translateY(-2px); }
-.btn-pink { background: var(--pink2); color: var(--text); }
-.btn-clear { background: var(--lilac); color: var(--text); }
+.btn-blue { background: var(--blue1); color: var(--text); }
+.btn-pink { background: var(--pink1); color: #a0456a; }
 
+/* ── tabs ── */
 .tabs {
   display: flex;
   gap: 8px;
@@ -251,138 +256,161 @@ body {
   font-weight: 800;
   padding: .5rem 1.1rem;
   border-radius: 50px;
-  border: 2.5px solid var(--pink2);
+  border: 2.5px solid var(--blue1);
   background: white;
   color: var(--text2);
   cursor: pointer;
   transition: all .2s;
 }
 .tab.active {
-  background: linear-gradient(135deg, var(--pink3), var(--lilac2));
+  background: linear-gradient(135deg, var(--blue3), var(--pink3));
   border-color: transparent;
   color: white;
-  box-shadow: 0 4px 14px rgba(220,130,170,0.4);
+  box-shadow: 0 4px 16px rgba(90,171,245,0.35);
   transform: translateY(-2px);
 }
 
+/* ── letter ── */
 .letter-box {
-  background: linear-gradient(135deg, var(--yellow) 0%, var(--pink1) 100%);
+  background: linear-gradient(135deg, var(--blue0) 0%, var(--pink0) 100%);
   border-radius: 20px;
   padding: 1.6rem;
   text-align: center;
   font-family: 'Quicksand', sans-serif;
   font-size: 1rem;
-  line-height: 1.8;
+  line-height: 1.85;
   color: var(--text);
   font-weight: 600;
-  border: 2px dashed var(--pink2);
+  border: 2px dashed var(--blue2);
 }
 .letter-box .big {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   font-weight: 800;
-  color: var(--pink4);
+  color: var(--blue4);
   display: block;
-  margin-bottom: .6rem;
+  margin-bottom: .7rem;
 }
 
+/* ── confetti ── */
 .confetti-piece {
   position: fixed;
-  font-size: 18px;
+  font-size: 16px;
   pointer-events: none;
   z-index: 999;
   animation: confettiFall linear forwards;
 }
 
+/* ── hug btn ── */
 .hug-btn {
   font-family: 'Nunito', sans-serif;
   font-size: 1rem;
   font-weight: 800;
-  padding: .8rem 2rem;
+  padding: .85rem 2.2rem;
   border: none;
   border-radius: 50px;
-  background: linear-gradient(135deg, var(--pink3), var(--lilac2));
+  background: linear-gradient(135deg, var(--blue3), var(--pink3));
   color: white;
   cursor: pointer;
-  box-shadow: 0 4px 20px rgba(220,130,170,0.45);
+  box-shadow: 0 4px 22px rgba(90,171,245,0.4);
   transition: transform .15s, box-shadow .15s;
   display: block;
-  margin: 1.2rem auto 0;
+  margin: 0 auto;
   position: relative;
   z-index: 2;
-  animation: heartbeat 2.5s ease-in-out infinite;
+  animation: heartbeat 2.8s ease-in-out infinite;
+  letter-spacing: .3px;
 }
 .hug-btn:hover {
   transform: scale(1.06);
-  box-shadow: 0 8px 28px rgba(220,130,170,0.55);
+  box-shadow: 0 8px 30px rgba(90,171,245,0.5);
 }
 
 .deco {
   position: fixed;
   pointer-events: none;
   z-index: 0;
-  font-size: 1.5rem;
-  opacity: .3;
+  opacity: .28;
 }
 `;
 
-/* ─── CONFETTI ─────────────────────────────────────────── */
-const CONFETTI_EMOJIS = ["🌸", "⭐", "💗", "🍬", "✨", "🎀", "🌷", "🍭", "💕", "🌟"];
+/* ── CONFETTI (pink/white/blue only) ── */
+const CONFETTI_ITEMS = ["🩷","🤍","🩵","💗","💙","🫧","🌸","💕"];
 
 function Confetti({ pieces }) {
-  return (
-    <>
-      {pieces.map(p => (
-        <span key={p.id} className="confetti-piece" style={{
-          left: p.x + "vw",
-          top: "-30px",
-          animationDuration: p.dur + "s",
-          animationDelay: p.delay + "s",
-        }}>{p.emoji}</span>
-      ))}
-    </>
-  );
+  return <>
+    {pieces.map(p => (
+      <span key={p.id} className="confetti-piece" style={{
+        left: p.x + "vw", top: "-30px",
+        animationDuration: p.dur + "s",
+        animationDelay: p.delay + "s",
+      }}>{p.emoji}</span>
+    ))}
+  </>;
 }
 
-function makeConfetti(n = 30) {
+function makeConfetti(n = 32) {
   return Array.from({ length: n }, (_, i) => ({
     id: Date.now() + i,
     x: Math.random() * 100,
-    emoji: CONFETTI_EMOJIS[Math.floor(Math.random() * CONFETTI_EMOJIS.length)],
-    dur: 2 + Math.random() * 2,
-    delay: Math.random() * 1,
+    emoji: CONFETTI_ITEMS[Math.floor(Math.random() * CONFETTI_ITEMS.length)],
+    dur: 2.2 + Math.random() * 2,
+    delay: Math.random() * .8,
   }));
 }
 
-/* ─── MELODY SVG ────────────────────────────────────────── */
-function MyMelody() {
+/* ── CINNAMOROLL SVG ── */
+function Cinnamoroll() {
   return (
-    <svg className="char-svg" width="130" height="130" viewBox="0 0 130 130" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <ellipse cx="30" cy="45" rx="18" ry="22" fill="#ffb3d1" />
-      <ellipse cx="100" cy="45" rx="18" ry="22" fill="#ffb3d1" />
-      <ellipse cx="30" cy="45" rx="11" ry="15" fill="#ff85b3" />
-      <ellipse cx="100" cy="45" rx="11" ry="15" fill="#ff85b3" />
-      <ellipse cx="65" cy="70" rx="42" ry="38" fill="white" />
-      <path d="M23 60 Q65 10 107 60 Q85 45 65 42 Q45 45 23 60Z" fill="#ffb3d1" />
-      <ellipse cx="88" cy="38" rx="10" ry="7" fill="#ff5fa0" transform="rotate(-20 88 38)" />
-      <ellipse cx="106" cy="32" rx="10" ry="7" fill="#ff5fa0" transform="rotate(20 106 32)" />
-      <circle cx="97" cy="35" r="5" fill="#ff85b3" />
-      <ellipse cx="52" cy="72" rx="5" ry="6" fill="#5a3550" />
-      <ellipse cx="78" cy="72" rx="5" ry="6" fill="#5a3550" />
-      <circle cx="54" cy="70" r="2" fill="white" />
-      <circle cx="80" cy="70" r="2" fill="white" />
-      <ellipse cx="65" cy="80" rx="4" ry="3" fill="#ff85b3" />
-      <ellipse cx="42" cy="82" rx="9" ry="6" fill="#ffb3d1" opacity=".6" />
-      <ellipse cx="88" cy="82" rx="9" ry="6" fill="#ffb3d1" opacity=".6" />
-      <ellipse cx="65" cy="116" rx="28" ry="18" fill="#ffd6ea" />
-      <ellipse cx="65" cy="110" rx="22" ry="16" fill="white" />
-      <ellipse cx="36" cy="108" rx="10" ry="7" fill="white" transform="rotate(-30 36 108)" />
-      <ellipse cx="94" cy="108" rx="10" ry="7" fill="white" transform="rotate(30 94 108)" />
+    <svg width="150" height="150" viewBox="0 0 150 150" fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      style={{filter:"drop-shadow(0 10px 28px rgba(90,171,245,0.28))"}}>
+
+      {/* big floppy ears */}
+      <ellipse cx="28" cy="58" rx="22" ry="44" fill="white" stroke="#d0d8e8" strokeWidth="2"/>
+      <ellipse cx="122" cy="58" rx="22" ry="44" fill="white" stroke="#d0d8e8" strokeWidth="2"/>
+      {/* ear inner pink */}
+      <ellipse cx="28" cy="60" rx="11" ry="28" fill="#ffe4f0"/>
+      <ellipse cx="122" cy="60" rx="11" ry="28" fill="#ffe4f0"/>
+
+      {/* head */}
+      <ellipse cx="75" cy="85" rx="52" ry="50" fill="white" stroke="#d0d8e8" strokeWidth="2"/>
+
+      {/* eyes */}
+      <ellipse cx="58" cy="82" rx="7" ry="8" fill="#2a4a6b"
+        style={{animation:"blink 5s ease-in-out infinite"}}/>
+      <ellipse cx="92" cy="82" rx="7" ry="8" fill="#2a4a6b"
+        style={{animation:"blink 5s ease-in-out infinite 0.15s"}}/>
+      <circle cx="61" cy="79" r="2.5" fill="white"/>
+      <circle cx="95" cy="79" r="2.5" fill="white"/>
+
+      {/* nose */}
+      <ellipse cx="75" cy="93" rx="5" ry="4" fill="#ffb3d1"/>
+
+      {/* cheeks */}
+      <ellipse cx="50" cy="98" rx="11" ry="7" fill="#ffcce0" opacity=".65"/>
+      <ellipse cx="100" cy="98" rx="11" ry="7" fill="#ffcce0" opacity=".65"/>
+
+      {/* little mouth */}
+      <path d="M70 100 Q75 105 80 100" stroke="#d0aac0" strokeWidth="1.8" strokeLinecap="round" fill="none"/>
+
+      {/* cinnamon tail / curl on top */}
+      <ellipse cx="75" cy="38" rx="10" ry="10" fill="#b5d8f7" stroke="#90caff" strokeWidth="1.5"/>
+      <path d="M75 48 Q82 55 75 60" stroke="#90caff" strokeWidth="2.5" strokeLinecap="round" fill="none"/>
+
+      {/* body */}
+      <ellipse cx="75" cy="132" rx="32" ry="20" fill="white" stroke="#d0d8e8" strokeWidth="1.5"/>
+      {/* tiny feet */}
+      <ellipse cx="58" cy="144" rx="12" ry="7" fill="white" stroke="#d0d8e8" strokeWidth="1.5"/>
+      <ellipse cx="92" cy="144" rx="12" ry="7" fill="white" stroke="#d0d8e8" strokeWidth="1.5"/>
+      {/* arms */}
+      <ellipse cx="42" cy="120" rx="12" ry="8" fill="white" stroke="#d0d8e8" strokeWidth="1.5" transform="rotate(-30 42 120)"/>
+      <ellipse cx="108" cy="120" rx="12" ry="8" fill="white" stroke="#d0d8e8" strokeWidth="1.5" transform="rotate(30 108 120)"/>
     </svg>
   );
 }
 
-/* ─── STAR GAME ─────────────────────────────────────────── */
-const STAR_EMOJIS = ["⭐", "🌟", "💫", "✨", "🌸", "💗", "🍬", "🎀"];
+/* ── STAR GAME ── */
+const STAR_ITEMS = ["🩷","🤍","🩵","💗","💙","🫧","🌸","💕"];
 
 function StarGame() {
   const [score, setScore] = useState(0);
@@ -392,12 +420,7 @@ function StarGame() {
   const timerRef = useRef(null);
   const spawnRef = useRef(null);
 
-  const start = () => {
-    setScore(0);
-    setStars([]);
-    setRunning(true);
-    setTimeLeft(20);
-  };
+  const start = () => { setScore(0); setStars([]); setRunning(true); setTimeLeft(20); };
 
   useEffect(() => {
     if (!running) return;
@@ -406,26 +429,23 @@ function StarGame() {
         if (t <= 1) {
           clearInterval(timerRef.current);
           clearInterval(spawnRef.current);
-          setRunning(false);
-          setStars([]);
+          setRunning(false); setStars([]);
           return 0;
         }
         return t - 1;
       });
     }, 1000);
-
     spawnRef.current = setInterval(() => {
       const id = Date.now() + Math.random();
       const x = 5 + Math.random() * 80;
       const y = 5 + Math.random() * 70;
-      const emoji = STAR_EMOJIS[Math.floor(Math.random() * STAR_EMOJIS.length)];
+      const emoji = STAR_ITEMS[Math.floor(Math.random() * STAR_ITEMS.length)];
       setStars(s => [...s.slice(-12), { id, x, y, emoji }]);
-    }, 700);
-
+    }, 650);
     return () => { clearInterval(timerRef.current); clearInterval(spawnRef.current); };
   }, [running]);
 
-  const catchStar = (id, e) => {
+  const catchIt = (id, e) => {
     e.stopPropagation();
     setStars(s => s.filter(st => st.id !== id));
     setScore(s => s + 1);
@@ -433,40 +453,39 @@ function StarGame() {
 
   return (
     <div>
-      <div className="section-title">⭐ pega as estrelinhas!</div>
+      <div className="section-title">pega os corações!</div>
       <div className="game-area" onClick={!running ? start : undefined}>
         {!running && timeLeft === 20 && (
-          <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8 }}>
-            <span style={{ fontSize: "2.5rem" }}>🌟</span>
-            <span style={{ fontWeight: 800, color: "#8a5878", fontSize: "1rem" }}>toca pra começar!</span>
+          <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:8}}>
+            <span style={{fontSize:"2.2rem"}}>🩵</span>
+            <span style={{fontWeight:800,color:"#5b82a8",fontSize:"1rem"}}>toca pra começar!</span>
           </div>
         )}
         {!running && timeLeft === 0 && (
-          <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 6, cursor: "pointer" }} onClick={start}>
-            <span style={{ fontSize: "2rem" }}>🎀</span>
-            <span style={{ fontWeight: 900, color: "#e05585", fontSize: "1.1rem" }}>você pegou {score}!</span>
-            <span style={{ fontWeight: 700, color: "#8a5878", fontSize: ".85rem" }}>jogar de novo?</span>
+          <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:6,cursor:"pointer"}} onClick={start}>
+            <span style={{fontWeight:900,color:"#2e86de",fontSize:"1.1rem"}}>você pegou {score}!</span>
+            <span style={{fontWeight:700,color:"#5b82a8",fontSize:".85rem"}}>jogar de novo?</span>
           </div>
         )}
         {running && (
-          <div style={{ position: "absolute", top: 8, right: 12, fontWeight: 800, color: "#8a5878", fontSize: ".85rem" }}>
-            ⏱ {timeLeft}s
+          <div style={{position:"absolute",top:8,right:12,fontWeight:800,color:"#5b82a8",fontSize:".85rem"}}>
+            {timeLeft}s
           </div>
         )}
         {stars.map(st => (
           <span key={st.id} className="game-star"
-            style={{ left: `${st.x}%`, top: `${st.y}%` }}
-            onClick={(e) => catchStar(st.id, e)}
+            style={{left:`${st.x}%`,top:`${st.y}%`}}
+            onClick={e => catchIt(st.id, e)}
           >{st.emoji}</span>
         ))}
       </div>
-      {running && <div className="score-badge">💗 {score} estrelinhas</div>}
+      {running && <div className="score-badge">🩷 {score} corações</div>}
     </div>
   );
 }
 
-/* ─── MEMORY GAME ───────────────────────────────────────── */
-const MEM_EMOJIS = ["🌸", "🍭", "🎀", "⭐", "🌈", "🍓", "💗", "🦋"];
+/* ── MEMORY GAME ── */
+const MEM_EMOJIS = ["🩷","🩵","🌸","🫧","💙","🤍","💗","🌷"];
 function shuffle(arr) { return [...arr].sort(() => Math.random() - .5); }
 
 function MemoryGame() {
@@ -500,7 +519,7 @@ function MemoryGame() {
           if (matched.every(c => c.matched)) {
             setWon(true);
             setConfetti(makeConfetti(40));
-            setTimeout(() => setConfetti([]), 4000);
+            setTimeout(() => setConfetti([]), 4500);
           }
         } else {
           setCards(newCards.map(c =>
@@ -516,39 +535,36 @@ function MemoryGame() {
     setCards(shuffle([...MEM_EMOJIS, ...MEM_EMOJIS].map((e, i) => ({
       id: i, emoji: e, flipped: false, matched: false
     }))));
-    setSelected([]);
-    setMoves(0);
-    setWon(false);
-    setConfetti([]);
+    setSelected([]); setMoves(0); setWon(false); setConfetti([]);
   };
 
   return (
     <div>
-      <Confetti pieces={confetti} />
-      <div className="section-title">🦋 jogo da memória</div>
+      <Confetti pieces={confetti}/>
+      <div className="section-title">jogo da memória</div>
       {won ? (
-        <div style={{ textAlign: "center", padding: "1rem 0" }}>
-          <div style={{ fontSize: "2.5rem", marginBottom: ".5rem" }}>🎉</div>
-          <div style={{ fontWeight: 900, color: "#e05585", fontSize: "1.1rem", marginBottom: ".3rem" }}>
+        <div style={{textAlign:"center",padding:"1rem 0"}}>
+          <div style={{fontSize:"2.2rem",marginBottom:".5rem"}}>🩵</div>
+          <div style={{fontWeight:900,color:"#2e86de",fontSize:"1.1rem",marginBottom:".3rem"}}>
             você completou em {moves} jogadas!
           </div>
-          <div style={{ color: "#8a5878", fontSize: ".9rem", marginBottom: "1rem" }}>incrível, Olivia! 🌸</div>
-          <button className="btn-sm btn-pink" onClick={reset}>jogar de novo 💗</button>
+          <div style={{color:"#5b82a8",fontSize:".9rem",marginBottom:"1rem"}}>incrível, Olivia!</div>
+          <button className="btn-sm btn-blue" onClick={reset}>jogar de novo</button>
         </div>
       ) : (
         <>
           <div className="memory-grid">
             {cards.map(c => (
               <div key={c.id}
-                className={`mem-card${c.flipped ? " flipped" : ""}${c.matched ? " matched" : ""}`}
+                className={`mem-card${c.flipped?" flipped":""}${c.matched?" matched":""}`}
                 onClick={() => flip(c.id)}
               >
-                {c.flipped || c.matched ? c.emoji : "🎀"}
+                {c.flipped || c.matched ? c.emoji : "🩵"}
               </div>
             ))}
           </div>
-          <div style={{ marginTop: ".7rem", color: "#8a5878", fontSize: ".85rem", fontWeight: 700 }}>
-            🌸 {moves} jogadas
+          <div style={{marginTop:".7rem",color:"#5b82a8",fontSize:".85rem",fontWeight:700}}>
+            {moves} jogadas
           </div>
         </>
       )}
@@ -556,14 +572,17 @@ function MemoryGame() {
   );
 }
 
-/* ─── PAINT ─────────────────────────────────────────────── */
-const COLORS = ["#ff85b3", "#c9a8f7", "#8ee3c8", "#ffd966", "#ff5fa0", "#74c0fc", "#ff8787", "#ffffff", "#5a3550"];
+/* ── PAINT ── */
+const COLORS = [
+  "#ff85b3","#ffb3d1","#ffffff","#90caff","#5aabf5",
+  "#2e86de","#c9a8f7","#ffd6ea","#b5d8f7","#2a4a6b"
+];
 
 function PaintGame() {
   const canvasRef = useRef(null);
   const drawing = useRef(false);
   const [color, setColor] = useState("#ff85b3");
-  const [size, setSize] = useState(8);
+  const [size, setSize] = useState(9);
 
   const getPos = (e) => {
     const rect = canvasRef.current.getBoundingClientRect();
@@ -575,10 +594,8 @@ function PaintGame() {
     drawing.current = true;
     const { x, y } = getPos(e);
     const ctx = canvasRef.current.getContext("2d");
-    ctx.beginPath();
-    ctx.moveTo(x, y);
+    ctx.beginPath(); ctx.moveTo(x, y);
   };
-
   const draw = (e) => {
     if (!drawing.current) return;
     const { x, y } = getPos(e);
@@ -590,7 +607,6 @@ function PaintGame() {
     ctx.lineJoin = "round";
     ctx.stroke();
   };
-
   const endDraw = () => { drawing.current = false; };
 
   const clear = () => {
@@ -607,108 +623,108 @@ function PaintGame() {
 
   return (
     <div>
-      <div className="section-title">🎨 quadro de pintura</div>
-      <canvas ref={canvasRef} className="paint-area" width={400} height={200}
+      <div className="section-title">quadro de pintura</div>
+      <canvas ref={canvasRef} className="paint-area" width={440} height={280}
         onMouseDown={startDraw} onMouseMove={draw} onMouseUp={endDraw} onMouseLeave={endDraw}
         onTouchStart={startDraw} onTouchMove={draw} onTouchEnd={endDraw}
-        style={{ maxWidth: "100%" }}
+        style={{maxWidth:"100%"}}
       />
       <div className="paint-colors">
         {COLORS.map(c => (
-          <div key={c} className={`color-dot${color === c ? " active" : ""}`}
-            style={{ background: c, border: c === "#ffffff" ? "3px solid #ddd" : undefined }}
+          <div key={c} className={`color-dot${color===c?" active":""}`}
+            style={{background:c, border: c==="#ffffff" ? "3px solid #c8d8e8" : undefined}}
             onClick={() => setColor(c)}
           />
         ))}
-        <input type="range" min="4" max="24" value={size}
+        <input type="range" min="4" max="28" value={size}
           onChange={e => setSize(+e.target.value)}
-          style={{ width: 70, accentColor: "#ff85b3", marginLeft: 4 }}
+          style={{width:72,accentColor:"#5aabf5",marginLeft:4}}
         />
       </div>
       <div className="paint-btns">
-        <button className="btn-sm btn-clear" onClick={clear}>limpar 🗑</button>
-        <button className="btn-sm btn-pink" onClick={save}>salvar 💾</button>
+        <button className="btn-sm btn-blue" onClick={clear}>limpar</button>
+        <button className="btn-sm btn-pink" onClick={save}>salvar</button>
       </div>
     </div>
   );
 }
 
-/* ─── MAIN ─────────────────────────────────────────────── */
+/* ── MAIN ── */
 function pics() {
-  const [tab, setTab] = useState("estrelas");
+  const [tab, setTab] = useState("coracoes");
   const [hugged, setHugged] = useState(false);
   const [confetti, setConfetti] = useState([]);
 
   const hug = () => {
     setHugged(true);
-    setConfetti(makeConfetti(35));
-    setTimeout(() => setConfetti([]), 4000);
+    setConfetti(makeConfetti(38));
+    setTimeout(() => setConfetti([]), 4500);
   };
 
   const tabs = [
-    { id: "estrelas", label: "⭐ estrelas" },
-    { id: "memoria", label: "🦋 memória" },
-    { id: "pintura", label: "🎨 pintura" },
-    { id: "carta", label: "💌 cartinha" },
+    { id: "coracoes", label: "corações" },
+    { id: "memoria",  label: "memória"  },
+    { id: "pintura",  label: "pintura"  },
+    { id: "carta",    label: "cartinha" },
   ];
 
   return (
     <>
       <style>{css}</style>
-      <Confetti pieces={confetti} />
+      <Confetti pieces={confetti}/>
 
-      <div className="blob" style={{ width: 400, height: 400, background: "#ffd6ea", top: -100, right: -120 }} />
-      <div className="blob" style={{ width: 350, height: 350, background: "#e8d5ff", bottom: -80, left: -100 }} />
-      <div className="blob" style={{ width: 250, height: 250, background: "#d4f5ec", top: "40%", left: "5%" }} />
+      <div className="blob" style={{width:420,height:420,background:"#c8e6ff",top:-110,right:-130}}/>
+      <div className="blob" style={{width:360,height:360,background:"#ffd6ea",bottom:-90,left:-110}}/>
+      <div className="blob" style={{width:260,height:260,background:"#e8f4ff",top:"38%",left:"4%"}}/>
 
-      {["🌸", "💗", "⭐", "🎀", "✨", "🌷"].map((e, i) => (
+      {["🩷","🩵","🤍","💗","🌸","🫧"].map((e,i) => (
         <span key={i} className="deco" style={{
-          top: `${10 + i * 13}%`,
-          left: i % 2 === 0 ? "2%" : "94%",
-          fontSize: "1.3rem",
-          animation: `floatY ${3 + i * .7}s ease-in-out infinite`,
+          top:`${8+i*14}%`,
+          left: i%2===0 ? "2%" : "94%",
+          fontSize:"1.3rem",
+          animation:`floatY ${3.2+i*.6}s ease-in-out infinite`,
         }}>{e}</span>
       ))}
 
       <div className="page">
         <div className="header">
-          <div className="header-title">olá, Olivia! 🌸</div>
-          <div className="header-sub">esse cantinho foi feito só pra você ✨</div>
+          <div className="header-title">Oi, Olivia!</div>
+          <div className="header-sub">fiz esse lugar pra voce se divertir um pouco</div>
         </div>
 
         <div className="char-wrap">
-          <MyMelody />
+          <Cinnamoroll />
         </div>
 
         <div className="tabs">
           {tabs.map(t => (
-            <button key={t.id} className={`tab${tab === t.id ? " active" : ""}`} onClick={() => setTab(t.id)}>
+            <button key={t.id} className={`tab${tab===t.id?" active":""}`} onClick={() => setTab(t.id)}>
               {t.label}
             </button>
           ))}
         </div>
 
         <div className="card">
-          {tab === "estrelas" && <StarGame />}
-          {tab === "memoria" && <MemoryGame />}
-          {tab === "pintura" && <PaintGame />}
-          {tab === "carta" && (
+          {tab === "coracoes" && <StarGame />}
+          {tab === "memoria"  && <MemoryGame />}
+          {tab === "pintura"  && <PaintGame />}
+          {tab === "carta"    && (
             <div className="letter-box">
-              <span className="big">💌 pra você, Olivia</span>
-              Às vezes a vida pesa um pouquinho demais,<br />
-              e tá tudo bem não estar bem.<br /><br />
-              Você é mais forte do que imagina —<br />
-              e mais amada do que percebe. 🌸<br /><br />
-              Esse momento vai passar,<br />
-              e quando passar, você vai olhar pra trás<br />
-              e ver o quanto você aguentou.<br /><br />
-              <strong>Você não está sozinha. 💗</strong>
+              <span className="big">Querida Olivia</span>
+              Às vezes a vida pesa um pouquinho demais,<br/>
+              e tá tudo bem não estar bem.<br/><br/>
+              Você é mais forte do que imagina —<br/>
+              e mais amada do que percebe.<br/><br/>
+              Esse momento vai passar,<br/>
+              e quando passar, você vai olhar pra trás<br/>
+              e ver o quanto você aguentou.<br/><br/>
+              <strong>Você não está sozinha. </strong>
             </div>
           )}
         </div>
 
         <button className="hug-btn" onClick={hug}>
-          {hugged ? "🤗 abraço enviado! 💗" : "me manda um abraço 🤗"}
+          {hugged ? "carinho recebido com amor" : "receber carinho"}
         </button>
       </div>
     </>
