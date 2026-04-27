@@ -362,7 +362,7 @@ function makeConfetti(n = 32) {
 function Cinnamoroll() {
   return (
     <img
-      src="pages/cinnamoroll.png"
+      src="./cinnamoroll.png"
       alt="Cinnamoroll"
       width={170}
       style={{
