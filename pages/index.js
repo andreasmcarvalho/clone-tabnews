@@ -361,51 +361,16 @@ function makeConfetti(n = 32) {
 /* ── CINNAMOROLL SVG ── */
 function Cinnamoroll() {
   return (
-    <svg width="150" height="150" viewBox="0 0 150 150" fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      style={{filter:"drop-shadow(0 10px 28px rgba(90,171,245,0.28))"}}>
-
-      {/* big floppy ears */}
-      <ellipse cx="28" cy="58" rx="22" ry="44" fill="white" stroke="#d0d8e8" strokeWidth="2"/>
-      <ellipse cx="122" cy="58" rx="22" ry="44" fill="white" stroke="#d0d8e8" strokeWidth="2"/>
-      {/* ear inner pink */}
-      <ellipse cx="28" cy="60" rx="11" ry="28" fill="#ffe4f0"/>
-      <ellipse cx="122" cy="60" rx="11" ry="28" fill="#ffe4f0"/>
-
-      {/* head */}
-      <ellipse cx="75" cy="85" rx="52" ry="50" fill="white" stroke="#d0d8e8" strokeWidth="2"/>
-
-      {/* eyes */}
-      <ellipse cx="58" cy="82" rx="7" ry="8" fill="#2a4a6b"
-        style={{animation:"blink 5s ease-in-out infinite"}}/>
-      <ellipse cx="92" cy="82" rx="7" ry="8" fill="#2a4a6b"
-        style={{animation:"blink 5s ease-in-out infinite 0.15s"}}/>
-      <circle cx="61" cy="79" r="2.5" fill="white"/>
-      <circle cx="95" cy="79" r="2.5" fill="white"/>
-
-      {/* nose */}
-      <ellipse cx="75" cy="93" rx="5" ry="4" fill="#ffb3d1"/>
-
-      {/* cheeks */}
-      <ellipse cx="50" cy="98" rx="11" ry="7" fill="#ffcce0" opacity=".65"/>
-      <ellipse cx="100" cy="98" rx="11" ry="7" fill="#ffcce0" opacity=".65"/>
-
-      {/* little mouth */}
-      <path d="M70 100 Q75 105 80 100" stroke="#d0aac0" strokeWidth="1.8" strokeLinecap="round" fill="none"/>
-
-      {/* cinnamon tail / curl on top */}
-      <ellipse cx="75" cy="38" rx="10" ry="10" fill="#b5d8f7" stroke="#90caff" strokeWidth="1.5"/>
-      <path d="M75 48 Q82 55 75 60" stroke="#90caff" strokeWidth="2.5" strokeLinecap="round" fill="none"/>
-
-      {/* body */}
-      <ellipse cx="75" cy="132" rx="32" ry="20" fill="white" stroke="#d0d8e8" strokeWidth="1.5"/>
-      {/* tiny feet */}
-      <ellipse cx="58" cy="144" rx="12" ry="7" fill="white" stroke="#d0d8e8" strokeWidth="1.5"/>
-      <ellipse cx="92" cy="144" rx="12" ry="7" fill="white" stroke="#d0d8e8" strokeWidth="1.5"/>
-      {/* arms */}
-      <ellipse cx="42" cy="120" rx="12" ry="8" fill="white" stroke="#d0d8e8" strokeWidth="1.5" transform="rotate(-30 42 120)"/>
-      <ellipse cx="108" cy="120" rx="12" ry="8" fill="white" stroke="#d0d8e8" strokeWidth="1.5" transform="rotate(30 108 120)"/>
-    </svg>
+    <img
+      src="pages/cinnamoroll.png"
+      alt="Cinnamoroll"
+      width={170}
+      style={{
+        filter: "drop-shadow(0 10px 28px rgba(90,171,245,0.28))",
+        userSelect: "none",
+        pointerEvents: "none",
+      }}
+    />
   );
 }
 
@@ -688,8 +653,8 @@ function pics() {
 
       <div className="page">
         <div className="header">
-          <div className="header-title">Oi, Olivia!</div>
-          <div className="header-sub">fiz esse lugar pra voce se divertir um pouco</div>
+          <div className="header-title">Oi Olivia!</div>
+          <div className="header-sub">fiz isso pra que voce possa se divertir um pouco</div>
         </div>
 
         <div className="char-wrap">
@@ -724,7 +689,7 @@ function pics() {
         </div>
 
         <button className="hug-btn" onClick={hug}>
-          {hugged ? "carinho recebido com amor" : "receber carinho"}
+          {hugged ? "receber carinho" : "receber carinho"}
         </button>
       </div>
     </>
